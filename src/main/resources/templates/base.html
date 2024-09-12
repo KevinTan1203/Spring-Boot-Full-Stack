@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  th:fragment="html(title, content, additionalCss, additionalScripts)"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:replace$(title)>TravelGear</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+    />
+    <th:block th:replace="${additionalCss} ?: ~{}"></th:block>
+  </head>
+
+  <body>
+    <div id="container-fluid">
+      <nav class="navbar navbar-expand-sm bg-light">
+        <div class="container-fluid">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Contact Us</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <th:block th:replace="${content}"></th:block>
+    </div>
+    <th:block th:replace="${additionalScripts} ?: ~{}"></th:block>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  th:replace="~{base::html(
+    ~{::title}, ~{::content}, ~{}, ~{}
+    )}"
+>
+  <title>Contact Us</title>
+
+  <th:block th:fragment="content">
+    <h2 class="display-1">Contact Us</h2>
+    <p class="lead">We value your feedback!</p>
+    <p>
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nihil, nobis
+      assumenda. Ad inventore asperiores ipsam consequuntur nesciunt quod sit
+      temporibus blanditiis soluta eum. Omnis unde in, facilis quam modi ullam!
+    </p>
+    <form>
+      <div>
+        <label>Enter your name</label>
+        <input type="text" class="form-input" />
+      </div>
+      <div>
+        <label>Enter your email</label>
+        <input type="text" class="form-input" />
+      </div>
+    </form>
+  </th:block>
+</html>

@@ -28,4 +28,9 @@ public class HomeController {
         // We need to return the file path to the template, relative to the resources/template
         return "about-us";
     }
+
+    @GetMapping("/contact-us")
+    public String ContactUs() {
+        return "contact-us";
+    }
 }
