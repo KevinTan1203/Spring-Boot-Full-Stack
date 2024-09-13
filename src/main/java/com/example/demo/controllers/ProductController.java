@@ -53,7 +53,8 @@ public class ProductController {
     @PostMapping("/products/create")
     public String processCreateProductForm(@Valid @ModelAttribute Product newProduct, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "/products/create"; // Rerender the create form if there are any errors. Skip the saving of the product
+            return "/products/create"; // Rerender the create form if there are any errors. Skip the saving of the
+                                       // product
         }
         // Save the new product to the database
         productRepo.save(newProduct);
@@ -81,6 +82,26 @@ public class ProductController {
     public String updateProduct(@PathVariable Long id, @ModelAttribute Product product) {
         product.setId(id);
         productRepo.save(product);
+        return "redirect:/products";
+    }
+
+    /*
+     * 2 routes for deleting
+     * 1. Show a delete form (asking the users if they really want to delete)
+     * 2. Process the delete
+     */
+    @GetMapping("/products/{id}/delete")
+    public String showDeleteProductForm(@PathVariable Long id, Model model) {
+        var product = productRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Invalid product Id" + id));
+
+        model.addAttribute("product", product);
+        return "products/delete";
+    }
+
+    @PostMapping("/products/{id}/delete")
+    public String deleteProduct(@PathVariable Long id) {
+        productRepo.deleteById(id);
         return "redirect:/products";
     }
 }
