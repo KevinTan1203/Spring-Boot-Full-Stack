@@ -9,6 +9,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 
 @Entity
@@ -21,9 +24,12 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @NotBlank(message = "Name is mandatory")
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     @Column(nullable = false)
     private String name;
 
+    @DecimalMin(value="0.01", message="Price must be greater than 0.01")
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 

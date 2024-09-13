@@ -2,6 +2,12 @@
   <div>
     <label>Name:</label>
     <input type="text" th:field="*{name}" class="form-control" />
+    <div
+      class="invalid-feedback"
+      th:if="${#fields.hasErrors('name')}"
+      th:errors="*{name}"
+      style="display: block;"
+    ></div>
   </div>
   <div>
     <label>Description:</label>
@@ -10,5 +16,11 @@
   <div>
     <label>Price:</label>
     <input type="number" th:field="*{price}" class="form-control" />
+    <div
+      class="invalid-feedback"
+      th:if="${#fields.hasErrors('price')}"
+      th:errors="*{price}"
+      style="display: block;"
+    ></div>
   </div>
 </div>
