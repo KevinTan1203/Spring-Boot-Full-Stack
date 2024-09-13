@@ -5,14 +5,16 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-
 
 @Entity
 @Table(name = "products")
@@ -29,9 +31,14 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @DecimalMin(value="0.01", message="Price must be greater than 0.01")
+    @DecimalMin(value = "0.01", message = "Price must be greater than 0.01")
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
+
+    // Create the foreign key for the product
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id", nullable = false) // Name is the column nmae in the table
+    private Category category;
 
     public Product() {
     }
@@ -73,6 +80,14 @@ public class Product {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
+
+    public Category getCategory() {
+        return category;
+     }
+     
+     public void setCategory(Category category) {
+        this.category = category;
+     }
 
     @Override
     public String toString() {

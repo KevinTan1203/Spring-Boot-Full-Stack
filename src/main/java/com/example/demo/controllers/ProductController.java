@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.models.Product;
+import com.example.demo.repo.CategoryRepo;
 import com.example.demo.repo.ProductRepo;
 
 import jakarta.validation.Valid;
@@ -18,6 +19,7 @@ import jakarta.validation.Valid;
 @Controller
 public class ProductController {
     private final ProductRepo productRepo;
+    private final CategoryRepo categoryRepo;
 
     /*
      * When springboot creates an instance of the ProductController, it will
@@ -26,13 +28,14 @@ public class ProductController {
      * ProductController.
      */
     @Autowired
-    public ProductController(ProductRepo productRepo) {
+    public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo) {
         this.productRepo = productRepo;
+        this.categoryRepo = categoryRepo;
     }
 
     @GetMapping("/products")
     public String listProduct(Model model) {
-        List<Product> products = productRepo.findAll();
+        List<Product> products = productRepo.findAllWithCategories();
         model.addAttribute("products", products); // Add the instance of the new product list to the model
         return "products/index";
     }
@@ -46,16 +49,20 @@ public class ProductController {
     public String showCreateProductForm(Model model) {
         var newProduct = new Product();
         model.addAttribute("product", newProduct); // Add the instance of the new product to the model
+        model.addAttribute("categories", categoryRepo.findAll());
         return "/products/create";
     }
 
     // Result of the validation will be in the bindingResult parameter
     @PostMapping("/products/create")
-    public String processCreateProductForm(@Valid @ModelAttribute Product newProduct, BindingResult bindingResult) {
+    public String processCreateProductForm(@Valid @ModelAttribute Product newProduct, BindingResult bindingResult,
+            Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", categoryRepo.findAll());
             return "/products/create"; // Rerender the create form if there are any errors. Skip the saving of the
                                        // product
         }
+
         // Save the new product to the database
         productRepo.save(newProduct);
         return "redirect:/products";
@@ -75,18 +82,26 @@ public class ProductController {
         var product = productRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Invalid product Id" + id));
         model.addAttribute("product", product);
+        model.addAttribute("categories", categoryRepo.findAll());
         return "products/edit";
     }
 
     @PostMapping("/products/{id}/edit")
-    public String updateProduct(@PathVariable Long id, @ModelAttribute Product product) {
+    public String updateProduct(@PathVariable Long id, @Valid @ModelAttribute Product product, Model model,
+            BindingResult bindingResult) {
         product.setId(id);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("product", product);
+            model.addAttribute("categories", categoryRepo.findAll());
+            return "redirect:/products/" + id + "/edit";
+        }
         productRepo.save(product);
         return "redirect:/products";
     }
 
     /*
-     * 2 routes for deleting
+     * Two routes for deleting
      * 1. Show a delete form (asking the users if they really want to delete)
      * 2. Process the delete
      */
