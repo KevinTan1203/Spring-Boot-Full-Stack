@@ -11,12 +11,12 @@
     )
 }"
 >
-  <title>Add New Product</title>
+  <title>Edit Product</title>
   <th:block th:fragment="content">
     <form method="POST" th:object="${product}">
       <div th:replace="~{products/product-form-fields::fields}"></div>
-      <button type="submit" class="btn btn-primary" value="Create Product">
-        Create Product
+      <button type="submit" class="btn btn-primary" value="Update Product">
+        Update Product
       </button>
     </form>
   </th:block>
