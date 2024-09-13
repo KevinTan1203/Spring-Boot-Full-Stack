@@ -14,19 +14,16 @@ public class HomeController {
         return "<h1>Hello World!</h1>";
     }
 
-    @GetMapping("/about-us")
-    // If the route is not marked with response body, then by default we are using templates
     /*
+     * If the route is not marked with response body, then by default we are using templates
      * The Model model param is automatically passed to aboutUd when it is called by Spring.
      * This is known as the view model
     */
+    @GetMapping("/about-us")
     public String AboutUs(Model model) {
-        // Get the current date and time
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime currentDateTime = LocalDateTime.now(); // Get the current date and time
         model.addAttribute("currentDateTime", currentDateTime);
-        
-        // We need to return the file path to the template, relative to the resources/template
-        return "about-us";
+        return "about-us"; // We need to return the file path to the template, relative to the resources/template
     }
 
     @GetMapping("/contact-us")
