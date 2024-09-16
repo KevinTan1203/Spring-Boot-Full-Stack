@@ -1,6 +1,8 @@
 package com.example.demo.controllers;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,10 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.models.Product;
+import com.example.demo.models.Tag;
 import com.example.demo.repo.CategoryRepo;
 import com.example.demo.repo.ProductRepo;
+import com.example.demo.repo.TagRepo;
 
 import jakarta.validation.Valid;
 
@@ -20,6 +25,7 @@ import jakarta.validation.Valid;
 public class ProductController {
     private final ProductRepo productRepo;
     private final CategoryRepo categoryRepo;
+    private final TagRepo tagRepo;
 
     /*
      * When springboot creates an instance of the ProductController, it will
@@ -28,14 +34,15 @@ public class ProductController {
      * ProductController.
      */
     @Autowired
-    public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo) {
+    public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo, TagRepo tagRepo) {
         this.productRepo = productRepo;
         this.categoryRepo = categoryRepo;
+        this.tagRepo = tagRepo;
     }
 
     @GetMapping("/products")
     public String listProduct(Model model) {
-        List<Product> products = productRepo.findAllWithCategories();
+        List<Product> products = productRepo.findAllWithCategoriesAndTags();
         model.addAttribute("products", products); // Add the instance of the new product list to the model
         return "products/index";
     }
@@ -50,17 +57,26 @@ public class ProductController {
         var newProduct = new Product();
         model.addAttribute("product", newProduct); // Add the instance of the new product to the model
         model.addAttribute("categories", categoryRepo.findAll());
+        model.addAttribute("allTags", tagRepo.findAll());
         return "/products/create";
     }
 
     // Result of the validation will be in the bindingResult parameter
     @PostMapping("/products/create")
-    public String processCreateProductForm(@Valid @ModelAttribute Product newProduct, BindingResult bindingResult,
+    public String processCreateProductForm(@Valid @ModelAttribute Product newProduct,
+            @RequestParam(required = false) List<Long> tagIds, BindingResult bindingResult,
             Model model) {
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryRepo.findAll());
+            model.addAttribute("allTags", tagRepo.findAll());
             return "/products/create"; // Rerender the create form if there are any errors. Skip the saving of the
                                        // product
+        }
+
+        if (tagIds != null) {
+            Set<Tag> tags = new HashSet<>(tagRepo.findAllById(tagIds));
+            newProduct.setTags(tags);
         }
 
         // Save the new product to the database
@@ -83,18 +99,29 @@ public class ProductController {
                 .orElseThrow(() -> new RuntimeException("Invalid product Id" + id));
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryRepo.findAll());
+        model.addAttribute("allTags", tagRepo.findAll());
         return "products/edit";
     }
 
     @PostMapping("/products/{id}/edit")
-    public String updateProduct(@PathVariable Long id, @Valid @ModelAttribute Product product, Model model,
+    public String updateProduct(@PathVariable Long id, @RequestParam(required = false) List<Long> tagIds,
+            @Valid @ModelAttribute Product product, Model model,
             BindingResult bindingResult) {
         product.setId(id);
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("product", product);
             model.addAttribute("categories", categoryRepo.findAll());
+            model.addAttribute("allTags", tagRepo.findAll());
             return "redirect:/products/" + id + "/edit";
+        }
+
+        if (tagIds != null && !tagIds.isEmpty()) {
+            Set<Tag> tags = new HashSet<Tag>(tagRepo.findAllById(tagIds));
+            product.setTags(tags);
+        } else {
+            // remove all existing tags
+            product.getTags().clear();
         }
         productRepo.save(product);
         return "redirect:/products";
