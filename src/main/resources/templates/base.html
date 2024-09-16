@@ -29,6 +29,12 @@
               <a class="nav-link" href="#">Contact Us</a>
             </li>
           </ul>
+          <div class="ml-auto">
+            <span th:if="${isAuthenticated}" th:text="${currentUser}"></span>
+            <form method="POST" th:action="@{/logout}" th:if="${isAuthenticated}">
+              <button type="submit" class="btn btn-danger" value="Logout">Log Out</button>
+            </form>
+          </div>
         </div>
       </nav>
       <th:block th:replace="${content}"></th:block>

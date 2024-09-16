@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{base::html(
+        ~{::title}, ~{::content}, ~{}, ~{}
+    )}"
+>
+  <title>Login</title>
+  <th:block th:fragment="content">
+    <form method="POST" th:action="@{/login}">
+      <div>
+        <label> Username: </label>
+        <input type="text" name="username" required class="form-control" />
+      </div>
+      <div>
+        <label> Password: </label>
+        <input type="password" name="password" required class="form-control" />
+      </div>
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+  </th:block>
+</html>
