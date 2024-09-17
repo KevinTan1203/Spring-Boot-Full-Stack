@@ -1,14 +1,19 @@
 package com.example.demo.controllers;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner.Mode;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.models.CartItem;
 import com.example.demo.models.Product;
 import com.example.demo.models.User;
 import com.example.demo.services.CartItemsService;
@@ -35,8 +40,7 @@ public class CartItemController {
 			Principal principal, RedirectAttributes redirectAttributes) {
 		try {
 			// When a route includes a principal in the parameter, the principal will
-			// contain information
-			// about the currently logged in user
+			// contain information about the currently logged in user
 			// Redirect attributes are for the flash messages
 
 			User user = userService.findUserByUsername(principal.getName());
@@ -55,5 +59,13 @@ public class CartItemController {
 			redirectAttributes.addFlashAttribute("Error when adding product: %s" + e.getMessage());
 			return "redirect:/products";
 		}
+	}
+
+	@GetMapping("")
+	public String viewCart(Model model, Principal principal) {
+		User user = userService.findUserByUsername(principal.getName());
+		List<CartItem> cartItems = cartItemsService.findByUser(user);
+		model.addAttribute("cartItems", cartItems);
+		return "cart/index";
 	}
 }

@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -34,5 +35,9 @@ public class CartItemsService {
 			CartItem cartItem = new CartItem(user, product, quantity);
 			return cartItemRepo.save(cartItem);
 		}
+	}
+
+	public List<CartItem> findByUser(User user) {
+		return cartItemRepo.findByUser(user);
 	}
 }

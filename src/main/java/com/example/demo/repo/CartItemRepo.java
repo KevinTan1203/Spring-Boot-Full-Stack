@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface CartItemRepo extends JpaRepository<CartItem, Long> {
 	// Find all the cart items that belong to a user
-	List<CartItem> findByUserUsername(String username);
+	List<CartItem> findByUser(User user);
 
 	Optional<CartItem> findByUserAndProduct(User user, Product product);
 
