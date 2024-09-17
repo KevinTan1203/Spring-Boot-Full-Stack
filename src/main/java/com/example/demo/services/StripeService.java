@@ -17,10 +17,10 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class StripeService {
-	@Value("stripe.api.secretkey")
+	@Value("${stripe.api.secretkey}")
 	private String stripeSecretKey;
 
-	@Value("stripe.api.publicKey")
+	@Value("${stripe.api.publicKey}")
 	private String stripePublicKey;
 
 	@PostConstruct
@@ -28,6 +28,10 @@ public class StripeService {
 		Stripe.apiKey = stripeSecretKey;
 	}
 
+	public String getPublicKey() {
+		return stripePublicKey;
+	}
+	
 	public Session createCheckOutSession(List<CartItem> cartItems, String successUrl, String cancelUrl)
 			throws StripeException {
 		// Create line item and pass all of it along with the payment requirements to
@@ -61,6 +65,7 @@ public class StripeService {
 				.setCancelUrl(cancelUrl)
 				.setSuccessUrl(successUrl)
 				.addAllLineItem(lineItems)
+				.addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
 				.build();
 
 		return Session.create(params);
