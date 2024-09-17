@@ -40,4 +40,17 @@ public class CartItemsService {
 	public List<CartItem> findByUser(User user) {
 		return cartItemRepo.findByUser(user);
 	}
+
+	@Transactional
+	public void updateQuantity(long cartItemId, User user, int newQuantity) {
+		CartItem existingItem = cartItemRepo.findByUserAndId(user, cartItemId)
+				.orElseThrow(() -> new IllegalArgumentException("No cart item with this id"));
+		existingItem.setQuantity(newQuantity);
+		cartItemRepo.save(existingItem);
+	}
+
+	@Transactional
+	public void removeFromCart(long cartItemId, User user) {
+		cartItemRepo.deleteByIdAndUser(cartItemId, user);
+	}
 }

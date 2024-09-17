@@ -4,10 +4,10 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner.Mode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -67,5 +67,32 @@ public class CartItemController {
 		List<CartItem> cartItems = cartItemsService.findByUser(user);
 		model.addAttribute("cartItems", cartItems);
 		return "cart/index";
+	}
+
+	@PostMapping("/{cartItemId}/updateQuantity")
+	public String updateQuantity(@PathVariable long cartItemId, @RequestParam int newQuantity,
+			RedirectAttributes redirectAttributes, Principal principal) {
+		try {
+			User user = userService.findUserByUsername(principal.getName());
+			cartItemsService.updateQuantity(cartItemId, user, newQuantity);
+			redirectAttributes.addFlashAttribute("message", "Quantity updated");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error updating quantity: " + e.getMessage());
+		}
+		return "redirect:/cart";
+	}
+
+	@GetMapping("/{cartItemId}/remove")
+	public String removeFromCart(@PathVariable Long cartItemId,
+			Principal principal,
+			RedirectAttributes redirectAttributes) {
+		try {
+			User user = userService.findUserByUsername(principal.getName());
+			cartItemsService.removeFromCart(cartItemId, user);
+			redirectAttributes.addFlashAttribute("message", "Item removed from cart");
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+		}
+		return "redirect:/cart";
 	}
 }
