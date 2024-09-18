@@ -17,12 +17,17 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		// the httpSecurity class allows us to define security rules
-		http.authorizeHttpRequests(auth -> auth.requestMatchers(
-				"/register", "/login", "/css/**", "/js/**" // All these urls can be accessed w/o login
-		)
-				.permitAll()
-				.anyRequest()
-				.authenticated())
+		http
+				.csrf(csrf -> csrf.ignoringRequestMatchers("/stripe/webhook"))
+				.authorizeHttpRequests(auth -> auth
+						// Ignore CSRF token for stripe webhook
+						.requestMatchers(
+								"/register", "/login", "/css/**", "/js/**", "/stripe/webhook" // All these urls can be accessed w/o
+																																							// login
+						)
+						.permitAll()
+						.anyRequest()
+						.authenticated())
 				.formLogin(form -> form.loginPage("/login").permitAll())
 				.logout(logout -> logout.permitAll());
 		return http.build();
