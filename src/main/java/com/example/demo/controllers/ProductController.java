@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.models.Product;
@@ -22,6 +23,7 @@ import com.example.demo.repo.TagRepo;
 import jakarta.validation.Valid;
 
 @Controller
+@RequestMapping("/products")
 public class ProductController {
 	private final ProductRepo productRepo;
 	private final CategoryRepo categoryRepo;
@@ -40,7 +42,7 @@ public class ProductController {
 		this.tagRepo = tagRepo;
 	}
 
-	@GetMapping("/products")
+	@GetMapping("")
 	public String listProduct(Model model) {
 		List<Product> products = productRepo.findAllWithCategoriesAndTags();
 		model.addAttribute("products", products); // Add the instance of the new product list to the model
@@ -52,7 +54,7 @@ public class ProductController {
 	 * 1 route to display the form
 	 * 1 route to process the form
 	 */
-	@GetMapping("/products/create")
+	@GetMapping("/create")
 	public String showCreateProductForm(Model model) {
 		var newProduct = new Product();
 		model.addAttribute("product", newProduct); // Add the instance of the new product to the model
@@ -62,7 +64,7 @@ public class ProductController {
 	}
 
 	// Result of the validation will be in the bindingResult parameter
-	@PostMapping("/products/create")
+	@PostMapping("/create")
 	public String processCreateProductForm(@Valid @ModelAttribute Product newProduct,
 			@RequestParam(required = false) List<Long> tagIds, BindingResult bindingResult,
 			Model model) {
@@ -84,7 +86,7 @@ public class ProductController {
 		return "redirect:/products";
 	}
 
-	@GetMapping("/products/{id}") // URL parameter
+	@GetMapping("/{id}") // URL parameter
 	public String productDetails(@PathVariable Long id, Model model) {
 		// Find the product with matching id
 		var product = productRepo.findById(id)
@@ -93,7 +95,7 @@ public class ProductController {
 		return "products/details"; // details.html in the products folder
 	}
 
-	@GetMapping("/products/{id}/edit")
+	@GetMapping("/{id}/edit")
 	public String showUpdateProduct(@PathVariable Long id, Model model) {
 		var product = productRepo.findById(id)
 				.orElseThrow(() -> new RuntimeException("Invalid product Id" + id));
@@ -103,7 +105,7 @@ public class ProductController {
 		return "products/edit";
 	}
 
-	@PostMapping("/products/{id}/edit")
+	@PostMapping("/{id}/edit")
 	public String updateProduct(@PathVariable Long id, @RequestParam(required = false) List<Long> tagIds,
 			@Valid @ModelAttribute Product product, Model model,
 			BindingResult bindingResult) {
@@ -132,7 +134,7 @@ public class ProductController {
 	 * 1. Show a delete form (asking the users if they really want to delete)
 	 * 2. Process the delete
 	 */
-	@GetMapping("/products/{id}/delete")
+	@GetMapping("/{id}/delete")
 	public String showDeleteProductForm(@PathVariable Long id, Model model) {
 		var product = productRepo.findById(id)
 				.orElseThrow(() -> new RuntimeException("Invalid product Id" + id));
@@ -141,7 +143,7 @@ public class ProductController {
 		return "products/delete";
 	}
 
-	@PostMapping("/products/{id}/delete")
+	@PostMapping("/{id}/delete")
 	public String deleteProduct(@PathVariable Long id) {
 		productRepo.deleteById(id);
 		return "redirect:/products";

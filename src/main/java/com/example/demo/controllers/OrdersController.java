@@ -1,43 +1,40 @@
 package com.example.demo.controllers;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.models.Order;
+import com.example.demo.models.Status;
 import com.example.demo.repo.OrderItemRepo;
 import com.example.demo.repo.OrderRepo;
-import com.example.demo.services.OrderService;
+import com.example.demo.repo.StatusRepo;
 
 import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/orders")
 public class OrdersController {
-	private final OrderService orderService;
 	private final OrderItemRepo orderItemRepo;
 	private final OrderRepo orderRepo;
-	private final List<Order> orders;
+	private final StatusRepo statusRepo;
 
 	@Autowired
-	public OrdersController(OrderService orderService, OrderItemRepo orderItemRepo, OrderRepo orderRepo) {
-		this.orderService = orderService;
+	public OrdersController(OrderItemRepo orderItemRepo, OrderRepo orderRepo, StatusRepo statusRepo) {
 		this.orderItemRepo = orderItemRepo;
 		this.orderRepo = orderRepo;
-		this.orders = new ArrayList<>();
+		this.statusRepo = statusRepo;
 	}
 
 	@GetMapping("")
@@ -47,7 +44,6 @@ public class OrdersController {
 		return "orders/index";
 	}
 
-	
 	@GetMapping("/{id}")
 	public String orderDetails(@PathVariable Long id, Model model) {
 		// Find the order with matching id
@@ -58,31 +54,44 @@ public class OrdersController {
 
 		// Find the user information
 		var user = order.getUser();
-		
+
 		model.addAttribute("order", order);
 		model.addAttribute("order_item", orderItem);
 		model.addAttribute("user", user);
 		return "orders/details";
 	}
 
-	// Route to update the status of a specific order
+	/*
+	 * Two routes for editing orders
+	 * 1. Show an edit form
+	 * 2. Process the edit
+	 */
 	@GetMapping("/{id}/edit")
 	public String showUpdateOrder(@PathVariable Long id, Model model) {
-		// var order = orderRepo.findById(id)
-		// 		.orElseThrow(() -> new RuntimeException("Invalid order Id" + id));
-		// model.addAttribute("order", order);
+		var order = orderRepo.findById(id)
+				.orElseThrow(() -> new RuntimeException("Invalid order Id" + id));
+		model.addAttribute("order", order);
+		model.addAttribute("allStatus", statusRepo.findAll());
 		return "orders/edit";
 	}
 
 	@PostMapping("/{id}/edit")
-	public String updateOrderStatus(@PathVariable Long id, @Valid @ModelAttribute Order order, Model model,
-			@RequestParam String status, BindingResult bindingResult) {
+	public String updateOrder(@PathVariable Long id, @RequestParam(required = false) Long statusId,
+			@Valid @ModelAttribute Order order, Model model, BindingResult bindingResult) {
 		order.setId(id);
+
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("order", order);
-			model.addAttribute("status", status);
-			return "orders/edit";
+			model.addAttribute("allStatus", statusRepo.findAll());
+			return "redirect:/orders/" + id + "/edit";
 		}
+
+		System.out.println("Status ID: " + statusId);
+
+		if (order.getStatus() == null) {
+			order.setStatus(statusRepo.findById(statusId).get().getName());
+		}
+
 		orderRepo.save(order);
 		return "redirect:/orders";
 	}
@@ -103,5 +112,5 @@ public class OrdersController {
 	public String deleteOrder(@PathVariable Long id) {
 		orderRepo.deleteById(id);
 		return "redirect:/orders";
-	}	
+	}
 }

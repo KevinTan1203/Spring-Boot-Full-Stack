@@ -1,13 +1,14 @@
 <div th:fragment="fields">
-  <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+  <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
   <div>
-    <label>Order:</label>
-    <input type="text" th:field="*{name}" class="form-control" />
-    <div
-      class="invalid-feedback"
-      th:if="${#fields.hasErrors('name')}"
-      th:errors="*{name}"
-      style="display: block"
-    ></div>
+    <label for="status" class="form-label">Order Status:</label>
+    <select class="form-control" id="status">
+      <option
+        th:each="status : ${allStatus}"
+        th:value="${status.id}"
+        th:text="${status.name}"
+        th:selected="${order.status != null}"
+      ></option>
+    </select>
   </div>
 </div>
