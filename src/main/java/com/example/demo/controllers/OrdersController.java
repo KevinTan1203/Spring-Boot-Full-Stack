@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,15 +35,16 @@ public class OrdersController {
         this.orders = new ArrayList<>();
     }
 
-    @GetMapping
-    @ResponseBody
-    public List<Order> viewAllOrders() {
-        return orders;
+    @GetMapping("")
+    public String viewOrders(Model model) {
+        List<Order> orders = orderRepo.findAll();
+        System.out.println(orders);
+        model.addAttribute("orders", orders);
+        return "orders/index";
     }
 
     // Route to view details of a specific order
     @GetMapping("/{orderId}")
-    @ResponseBody
     public Order viewOrderDetails(@PathVariable int orderId) {
         return orders.stream()
             .filter(order -> order.getOrderId() == orderId)
@@ -50,9 +52,8 @@ public class OrdersController {
             .orElse(null); // Return null if order is not found (can be replaced by better error handling)
     }
 
-   // Route to delete a specific order
+    // Route to delete a specific order
     @DeleteMapping("/{orderId}")
-    @ResponseBody
     public String deleteOrder(@PathVariable int orderId) {
         boolean removed = orders.removeIf(order -> order.getOrderId() == orderId);
         if (removed) {
@@ -64,7 +65,6 @@ public class OrdersController {
 
     // Route to update the status of a specific order
     @PutMapping("/{orderId}/status")
-    @ResponseBody
     public String updateOrderStatus(@PathVariable int orderId, @RequestParam String status) {
         Order order = orders.stream()
                 .filter(o -> o.getOrderId() == orderId)

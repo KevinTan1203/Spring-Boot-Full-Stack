@@ -62,8 +62,6 @@ public class OrderService {
 				orderedProducts.put(productId, quantity);
 			}
 
-			System.out.println(orderedProducts);
-
 			// Save user order information to the database
 			// Step 1: Create a new Order object that records the user and the status
 			Order order = new Order();
