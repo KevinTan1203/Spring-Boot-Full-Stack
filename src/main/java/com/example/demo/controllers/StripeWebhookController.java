@@ -18,37 +18,38 @@ import com.stripe.net.Webhook;
 @RestController
 @RequestMapping("/stripe/webhook")
 public class StripeWebhookController {
-    @Value("${stripe.webhook.secret}")
-    private String endpointSecret;
+	@Value("${stripe.webhook.secret}")
+	private String endpointSecret;
 
-    private final OrderService orderService;
+	private final OrderService orderService;
 
-    @Autowired
-    public StripeWebhookController(OrderService orderService) {
-        this.orderService = orderService;
-    }
+	@Autowired
+	public StripeWebhookController(OrderService orderService) {
+		this.orderService = orderService;
+	}
 
-    // Stripe-Signature: Whenever a webhook is sent to your server, Stripe will
-    // include a signature in the Stripe-Signature header for security purposes
-    @PostMapping
-    public ResponseEntity<String> handleStripeEvent(@RequestBody String payload,
-            @RequestHeader("Stripe-Signature") String sigHeader) {
-                // Extract the event from the request
-                Event event = null;
-                System.out.println("Stripe Webhook Called");
-                try {
-                    event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
-                } catch (Exception e) {
-                    System.out.println("Error handling stripe event: " + e.getMessage());
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Signature");
-                }
-                System.out.println(event);
+	// Stripe-Signature: Whenever a webhook is sent to your server, Stripe will
+	// include a signature in the Stripe-Signature header for security purposes
+	@PostMapping
+	public ResponseEntity<String> handleStripeEvent(@RequestBody String payload,
+			@RequestHeader("Stripe-Signature") String sigHeader) {
+		// Extract the event from the request
+		Event event = null;
+		System.out.println("Stripe Webhook Called");
+		try {
+			event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
+		} catch (Exception e) {
+			System.out.println("Error handling stripe event: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Signature");
+		}
+		System.out.println(event);
 
-                if (event.getType().equals("checkout.session.completed")) {
-                    // handle processing of order
-                    orderService.handleSuccessfulPayment(event);
-                    System.out.println("Checkout session completed");
-                }
-                return ResponseEntity.ok().build();
-    }
+		if (event.getType().equals("checkout.session.completed")) {
+			// handle processing of order
+			orderService.handleSuccessfulPayment(event);
+			System.out.println("Checkout session completed");
+		}
+
+		return ResponseEntity.ok().build();
+	}
 }

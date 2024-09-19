@@ -32,7 +32,7 @@ public class StripeService {
 		return stripePublicKey;
 	}
 	
-	public Session createCheckOutSession(List<CartItem> cartItems, String successUrl, String cancelUrl)
+	public Session createCheckOutSession(List<CartItem> cartItems, long userId, String successUrl, String cancelUrl)
 			throws StripeException {
 		// Create line item and pass all of it along with the payment requirements to
 		// Stripe
@@ -66,6 +66,7 @@ public class StripeService {
 				.setSuccessUrl(successUrl)
 				.addAllLineItem(lineItems)
 				.addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+				.setClientReferenceId(Long.toString(userId))
 				.build();
 
 		return Session.create(params);

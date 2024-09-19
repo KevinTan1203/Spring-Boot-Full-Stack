@@ -34,7 +34,7 @@ public class CheckoutController {
             String cancelUrl = "https://www.yahoo.com";
 
             var cartItems = cartItemsService.findByUser(user);
-            var session = stripeService.createCheckOutSession(cartItems, successUrl, cancelUrl);
+            var session = stripeService.createCheckOutSession(cartItems, user.getId(), successUrl, cancelUrl);
 
             model.addAttribute("sessionId", session.getId());
             model.addAttribute("stripePublicKey", stripeService.getPublicKey());
