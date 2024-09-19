@@ -34,12 +34,12 @@ public class Order {
     this.status = status;
   }
 
-  public Long getOrderId() {
+  public Long getId() {
     return id;
   }
 
-  public void setOrderId(Long orderId) {
-    this.id = orderId;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public User getUser() {

@@ -1,0 +1,13 @@
+<div th:fragment="fields">
+  <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+  <div>
+    <label>Order:</label>
+    <input type="text" th:field="*{name}" class="form-control" />
+    <div
+      class="invalid-feedback"
+      th:if="${#fields.hasErrors('name')}"
+      th:errors="*{name}"
+      style="display: block"
+    ></div>
+  </div>
+</div>

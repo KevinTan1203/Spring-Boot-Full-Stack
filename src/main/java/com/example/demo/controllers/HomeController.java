@@ -8,12 +8,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class HomeController {
-    @GetMapping("/")
-    @ResponseBody
-    public String HelloWorld() {
-        return "<h1>Hello World!</h1>";
-    }
-
     /*
      * If the route is not marked with response body, then by default we are using templates
      * The Model model param is automatically passed to aboutUd when it is called by Spring.

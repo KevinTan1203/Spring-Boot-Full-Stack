@@ -15,27 +15,29 @@
   <th:block th:fragment="content">
     <h1 class="mb-4">Order History</h1>
     <div th:if="${#lists.isEmpty(orders)}" class="alert alert-info">
-      You have not placed any orders yet.
+      No Active Orders Found!
     </div>
-    <thead>
-      <tr>
-        <th>Order ID</th>
-        <th>User ID</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr th:each="order : ${orders}">
-
-
-        <!-- <td th:text="${order.id}"></td>
-        <td th:text="${order.user.id}"></td>
-        <td th:text="${order.status}"></td> -->
-        <td>
-          <a th:href="">Details</a>
-          <a th:href="">Delete</a>
-        </td>
-      </tr>
-    </tbody>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>User ID</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="order : ${orders}">
+          <td th:text="${order.id}"></td>
+          <td th:text="${order.user}"></td>
+          <td th:text="${order.status}"></td>
+          <td>
+            <a th:href="@{/orders/{id}(id=${order.id})}">Order Details</a>
+            <a th:href="@{/orders/{id}/status(id=${order.id})}">Update Status</a>
+            <a th:href="@{/orders/{id}/delete(id=${order.id})}">Delete</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </th:block>
 </html>

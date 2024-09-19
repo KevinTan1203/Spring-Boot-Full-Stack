@@ -3,19 +3,36 @@
   lang="en"
   xmlns:th="http://www.thymeleaf.org"
   th:replace="~{base::html(
-        ~{::title}, ~{::content}, ~{::additionalCss}, ~{}
-    )}"
+    ~{::title}, ~{::content}, ~{::additionalCss}, ~{}
+)}"
 >
   <th:block th:fragment="additionalCss">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhKUvXJUA6LInK+07WDVn4N/MAMNSnX/mdIk+GmwBkgOeu/XG7eJTRn/UvG/Zfn"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="styles.css" />
   </th:block>
   <title>Atas Travel Gear</title>
   <th:block th:fragment="content">
-    <h1>Welcome to Travel Here!</h1>
-    <img src="paradise.jpg" id="champion-img" />
-    <p>
-      Your one stop shop for all your travel needs. We provide the best quality
+    <h1 class="mb-4">Welcome to TravelGear!</h1>
+    <p class="lead">
+      Your one-stop shop for all your travel needs. We provide the best quality
+      gear and accessories for your adventures.
     </p>
-    <p>Current Date Time: <span th:text="${currentDateTime}"></span></p>
+    <div class="container text-center my-5">
+      <img
+        src="paradise.jpg"
+        id="champion-img"
+        class="img-fluid rounded mb-3"
+        alt="Travel Paradise"
+      />
+
+      <p class="text-muted">
+        Current Date Time: <span th:text="${currentDateTime}"></span>
+      </p>
+    </div>
   </th:block>
 </html>
