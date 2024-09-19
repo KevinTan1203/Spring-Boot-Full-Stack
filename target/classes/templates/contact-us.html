@@ -8,22 +8,40 @@
   <title>Contact Us</title>
 
   <th:block th:fragment="content">
+    <link rel="stylesheet" href="styles.css" />
     <h1 class="mb-4">Contact Us</h1>
+    <img
+        src="paradise-4.jpg"
+        id="champion-img"
+        class="img-fluid rounded mb-4 d-block mx-auto"
+        alt="Travel Paradise"
+      />
     <p class="lead">We value your feedback!</p>
     <p>
       Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nihil, nobis
       assumenda. Ad inventore asperiores ipsam consequuntur nesciunt quod sit
       temporibus blanditiis soluta eum. Omnis unde in, facilis quam modi ullam!
     </p>
-    <form>
-      <div>
-        <label>Enter your name</label>
-        <input type="text" class="form-input" />
+    <form class="mt-4">
+      <div class="mb-3">
+        <label for="name" class="form-label">Enter your name</label>
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          placeholder="John Doe"
+        />
       </div>
-      <div>
-        <label>Enter your email</label>
-        <input type="text" class="form-input" />
+      <div class="mb-3">
+        <label for="email" class="form-label">Enter your email</label>
+        <input
+          type="email"
+          id="email"
+          class="form-control"
+          placeholder="you@example.com"
+        />
       </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </th:block>
 </html>

@@ -47,9 +47,9 @@
                 Add to Cart
               </button>
             </form>
-            <a th:href="@{/products/{id}(id=${product.id})}">Product Details</a>
-            <a th:href="@{/products/{id}/edit(id=${product.id})}">Edit</a>
-            <a th:href="@{/products/{id}/delete(id=${product.id})}">Delete</a>
+            <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-sm btn-info me-2">Product Details</a>
+            <a th:href="@{/products/{id}/edit(id=${product.id})}" class="btn btn-sm btn-warning me-2">Edit</a>
+            <a th:href="@{/products/{id}/delete(id=${product.id})}" class="btn btn-sm btn-danger">Delete</a>
           </td>
         </tr>
       </tbody>

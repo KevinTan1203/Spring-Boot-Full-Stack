@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.models.Order;
 import com.example.demo.models.Status;
+import com.example.demo.models.User;
 import com.example.demo.repo.OrderItemRepo;
 import com.example.demo.repo.OrderRepo;
 import com.example.demo.repo.StatusRepo;
@@ -76,21 +77,16 @@ public class OrdersController {
 	}
 
 	@PostMapping("/{id}/edit")
-	public String updateOrder(@PathVariable Long id, @RequestParam(required = false) Long statusId,
-			@Valid @ModelAttribute Order order, Model model, BindingResult bindingResult) {
+	public String updateOrder(@PathVariable Long id, @Valid @ModelAttribute Order order, Model model,
+			BindingResult bindingResult) {
+
+		// Retrieve user from OrderRepo and update the status
+		User user = orderRepo.findById(id).get().getUser();
+		order.setUser(user);
 		order.setId(id);
-
-		if (bindingResult.hasErrors()) {
-			model.addAttribute("order", order);
-			model.addAttribute("allStatus", statusRepo.findAll());
-			return "redirect:/orders/" + id + "/edit";
-		}
-
-		System.out.println("Status ID: " + statusId);
-
-		if (order.getStatus() == null) {
-			order.setStatus(statusRepo.findById(statusId).get().getName());
-		}
+		order.setStatus(
+				statusRepo.findById(
+						Long.parseLong(order.getStatus())).get().getName());
 
 		orderRepo.save(order);
 		return "redirect:/orders";
@@ -110,6 +106,7 @@ public class OrdersController {
 
 	@PostMapping("/{id}/delete")
 	public String deleteOrder(@PathVariable Long id) {
+		orderItemRepo.deleteByOrderId(id);
 		orderRepo.deleteById(id);
 		return "redirect:/orders";
 	}

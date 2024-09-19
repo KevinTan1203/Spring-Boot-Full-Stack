@@ -21,6 +21,8 @@ import com.stripe.model.LineItem;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionListLineItemsParams;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class OrderService {
 	private final OrderRepo orderRepo;
@@ -86,5 +88,10 @@ public class OrderService {
 		} catch (Exception e) {
 			System.out.println("Error handling stripe event: " + e.getMessage());
 		}
+	}
+
+	@Transactional
+	public void deleteOrder(Long orderId) {
+		orderRepo.deleteById(orderId);
 	}
 }
