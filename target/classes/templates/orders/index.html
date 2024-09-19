@@ -22,6 +22,7 @@
         <tr>
           <th>Order ID</th>
           <th>User ID</th>
+          <th>User Name</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -29,11 +30,12 @@
       <tbody>
         <tr th:each="order : ${orders}">
           <td th:text="${order.id}"></td>
-          <td th:text="${order.user}"></td>
+          <td th:text="${order.user.id}"></td>
+          <td th:text="${order.user.username}"></td>
           <td th:text="${order.status}"></td>
           <td>
             <a th:href="@{/orders/{id}(id=${order.id})}">Order Details</a>
-            <a th:href="@{/orders/{id}/status(id=${order.id})}">Update Status</a>
+            <a th:href="@{/orders/{id}/edit(id=${order.id})}">Update Status</a>
             <a th:href="@{/orders/{id}/delete(id=${order.id})}">Delete</a>
           </td>
         </tr>

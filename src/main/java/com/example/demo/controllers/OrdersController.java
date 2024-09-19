@@ -68,9 +68,9 @@ public class OrdersController {
 	// Route to update the status of a specific order
 	@GetMapping("/{id}/edit")
 	public String showUpdateOrder(@PathVariable Long id, Model model) {
-		var order = orderRepo.findById(id)
-				.orElseThrow(() -> new RuntimeException("Invalid order Id" + id));
-		model.addAttribute("order", order);
+		// var order = orderRepo.findById(id)
+		// 		.orElseThrow(() -> new RuntimeException("Invalid order Id" + id));
+		// model.addAttribute("order", order);
 		return "orders/edit";
 	}
 
